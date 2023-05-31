@@ -54,7 +54,7 @@ function App() {
              <td>{pessoas.whats}</td>
              <td>{pessoas.status}</td>
              <td>
-               <button className="btn btn primary">Editar</button> {" "}
+               <button className="btn btn primary">[Editar]</button> {" "}
                <button className="btn btn danger">Excluir</button>
              </td>
            </tr>
