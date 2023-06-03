@@ -9,6 +9,29 @@ function App() {
 
   const baseUrl="https://localhost:44328/api/Pessoas";
   const [data, setData]=useState([]);
+  const [modalIncluir, setModalIncluir]=useState(false);
+
+  const [pessoaSelecionada, setPessoaSelecionada]=useState({
+    id: '',
+    nome: '',
+    email: '',
+    dataNascimento: '',
+    dddWhats: '',
+    whats: '',
+    status: ''
+  })
+
+  const abrirFecharModalIncluir=()=>{
+    setModalIncluir(!modalIncluir);
+  }
+
+  const handleChange = e=>{
+    const {name, value} = e.target;
+    setPessoaSelecionada({
+      ...pessoaSelecionada,[name]:value
+    });
+    console.log(pessoaSelecionada);
+  }
 
   const pedidoGet = async()=>{
     await axios.get(baseUrl)
@@ -19,17 +42,28 @@ function App() {
     })
   }
 
+  const pedidoPost = async()=>{
+    delete pessoaSelecionada.id;
+    await axios.get(baseUrl, pessoaSelecionada)
+    .then(response => {
+      setData(data.concat(response.data));
+      abrirFecharModalIncluir();
+    }).catch(error=>{
+      console.log(error);
+    })
+  }
+
   useEffect(()=>{
     pedidoGet();
   })
 
    return (
-     <div className="App">
+     <div className="aluno-container">
      <br/>
      <h3>Cadastro</h3>
      <header className="App-header">
          <img src={logoCadastro} alt='Cadastro' />
-         <button className="btn btn-sucess">Incluir</button>
+         <button className="btn btn-sucess" onClick={()=>abrirFecharModalIncluir()}>Incluir</button>
      </header>
      <table className="table table-bordered">
        <thead>
@@ -54,13 +88,47 @@ function App() {
              <td>{pessoas.whats}</td>
              <td>{pessoas.status}</td>
              <td>
-               <button className="btn btn primary">[Editar]</button> {" "}
+               <button className="btn btn primary">Editar</button> {" "}
                <button className="btn btn danger">Excluir</button>
              </td>
            </tr>
          ))}
        </tbody>
      </table>
+
+    <Modal isOpen={modalIncluir}>
+      <ModalHeader>
+        Incluir Pessoa
+      </ModalHeader>
+      <ModalBody>
+        <div className="form-group">
+          <label>Nome:</label>
+          <br />
+          <input type="text" className="form-control" name="nome" onChange={handleChange} />
+          <br />
+          <label>Email:</label>
+          <br />
+          <input type="text" className="form-control" name="email" onChange={handleChange} />
+          <label>Data Nascimento:</label>
+          <br />
+          <input type="text" className="form-control" name="dataNascimento" onChange={handleChange} />
+          <br />
+          <label>DDD Whats:</label>
+          <br />
+          <input type="text" className="form-control" name="dddWhats" onChange={handleChange} />
+          <br />
+          <label>Whats:</label>
+          <br />
+          <input type="text" className="form-control" name="whats" onChange={handleChange} />
+          <br />
+        </div>
+      </ModalBody>
+      <ModalFooter>
+        <button className="btn btn-primary" onClick={()=>pedidoPost()}>Incluir</button>{"   "}
+        <button className="btn btn-danger" onClick={()=>abrirFecharModalIncluir()}>Cancelar</button>
+      </ModalFooter>
+    </Modal>
+
      </div>
    );
  }
